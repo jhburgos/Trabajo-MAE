@@ -49,10 +49,10 @@ git config --global user.email "tu_correo@ejemplo.com"
 
 ## 4. Conectar GitHub a RStudio
 
-###Metodo para el trabajo,
+### Metodo para el trabajo,
 vallan a arriba a la derecha en "new proyect" y apretan version control, en ese lugar le van a pedir la url del archivo es decir del github https://github.com/jhburgos/Trabajo-MAE, y listo ya estarian anclado al github, 
 
-###Ahora para subir los codigos y etc
+### Ahora para subir los codigos y etc  
 tienen que apretar el codigo en files les va a aparecer todo los archivos del trabajo, apretan el codigo a modificar y en el codigo pueden editarlo y desp subirlos con ctrl+s (guardado) y desp apretan en la parte de environment les va a aparecer el git apretan ahi, van a commit en la caja de commit mesagge colocan que hicieron y desp boton commit que esta debajo, y desp apretan push para subirlo
 
 > **Nota:** La primera vez que hagas Push/Pull, RStudio te pedirá credenciales. Tu usuario es tu nombre de usuario de GitHub y la contraseña es el Token que generaste en el paso anterior.
