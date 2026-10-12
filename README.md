@@ -49,36 +49,17 @@ git config --global user.email "tu_correo@ejemplo.com"
 
 ## 4. Conectar GitHub a RStudio
 
-Tienes dos formas de vincular tus proyectos.
+###Metodo para el trabajo,
+vallan a arriba a la derecha en "new proyect" y apretan version control, en ese lugar le van a pedir la url del archivo es decir del github https://github.com/jhburgos/Trabajo-MAE, y listo ya estarian anclado al github, 
 
-### Método 1: Clonar un repositorio desde GitHub a RStudio (Recomendado para empezar)
-1. En GitHub, crea un nuevo repositorio.
-2. En la página de tu nuevo repositorio, haz clic en el botón verde **Code** y copia la URL (termina en `.git`).
-3. Abre RStudio y ve a **File** > **New Project...**
-4. Selecciona **Version Control** > **Git**.
-5. Pega la URL en *Repository URL*. RStudio rellenará automáticamente el nombre de la carpeta.
-6. Elige dónde guardar el proyecto en tu computadora y haz clic en **Create Project**.
+###Ahora para subir los codigos y etc
+tienen que apretar el codigo en files les va a aparecer todo los archivos del trabajo, apretan el codigo a modificar y en el codigo pueden editarlo y desp subirlos con ctrl+s (guardado) y desp apretan en la parte de environment les va a aparecer el git apretan ahi, van a commit en la caja de commit mesagge colocan que hicieron y desp boton commit que esta debajo, y desp apretan push para subirlo
+
+
 
 > **Nota:** La primera vez que hagas Push/Pull, RStudio te pedirá credenciales. Tu usuario es tu nombre de usuario de GitHub y la contraseña es el Token que generaste en el paso anterior.
 
-### Método 2: Usar el paquete `usethis` para proyectos existentes
-Si ya tienes un proyecto en RStudio y quieres subirlo a GitHub, abre la consola de R y ejecuta:
 
-```R
-# Instala los paquetes si no los tienes
-install.packages(c("usethis", "gitcreds"))
-
-library(usethis)
-
-# Inicia Git en tu proyecto local
-use_git() 
-
-# Configura tu token de GitHub (pega el token cuando la consola te lo pida)
-gitcreds::gitcreds_set()
-
-# Sube el proyecto a GitHub
-use_github()
-```
 
 ---
 
