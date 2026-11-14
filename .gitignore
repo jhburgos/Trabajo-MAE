@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+backups/
+output/*.rds
+output/*.csv
+!output/resumen_filtros.csv
+*.aux
+*.log
+*.out

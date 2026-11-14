@@ -1,0 +1,128 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{lmodern,booktabs,enumitem,xcolor,array}
+\usepackage[hidelinks]{hyperref}
+\definecolor{azul}{RGB}{0,51,102}
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries\color{azul}}{}{0em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{azul}}{}{0em}{}
+\setlist{itemsep=1pt,topsep=2pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\newcommand{\cod}[1]{\texttt{#1}}
+
+\begin{document}
+\sloppy
+
+{\large\bfseries\color{azul} Bitácora del trabajo}\\[2pt]
+Efecto del número de oferentes sobre el precio de adjudicación en licitaciones del Estado\\
+Análisis Econométrico --- Burgos, Buriticá, Poblete \hfill Actualizada: 14/11/2026
+
+\vspace{4pt}\hrule\vspace{6pt}
+
+Registro de los cambios a la base de datos y al código. Repositorio: \url{https://github.com/jhburgos/Trabajo-MAE}. Script principal: \cod{codigo/01\_limpieza\_una\_linea.R}. Antes de cada cambio se guarda un respaldo en \cod{backups/AAAA-MM-DD\_HHMM/} (solo local, no se sube a GitHub).
+
+\section{Estado actual}
+\begin{itemize}
+  \item \textbf{Datos de entrada:} \cod{input/2025-12.zip}, que contiene \cod{lic\_2025-12.csv} (licitaciones de ChileCompra, diciembre de 2025; 195 MB; 98.204 filas, una por oferta a cada línea de cada licitación).
+  \item \textbf{Base limpia:} \cod{output/lic\_2025-12\_una\_linea.rds} (y \cod{.csv}): 3.950 licitaciones de una sola línea, adjudicadas, con todos los montos en pesos; 12.301 filas (ofertas).
+  \item \textbf{Otros resultados en \cod{output/}:} \cod{resumen\_filtros.csv}, \cod{propuestas\_avance.pdf} y esta bitácora.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Paso & Licitaciones & Filas & Quedan fuera \\
+\midrule
+Base completa, diciembre 2025 & 7.070 & 98.204 & --- \\
+Una sola línea & 5.209 & 16.237 & 1.861 \\
+Una sola línea y adjudicada & 3.950 & 12.301 & 1.259 \\
+Montos convertidos a pesos & 3.950 & 12.301 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Registro de cambios}
+
+\subsection{14 de noviembre de 2026}
+
+\textbf{Organización del proyecto}
+\begin{itemize}
+  \item Se subió a GitHub el archivo de datos comprimido (de 195 MB a 12 MB, bajo el límite de 100 MB de GitHub).
+  \item Se creó la carpeta del proyecto en la asignatura y se ordenó en \cod{input/} (datos originales, no se modifican), \cod{output/} (todo lo que genera el código), \cod{codigo/} y \cod{backups/}.
+  \item El script fija solo la carpeta del proyecto, para que funcione aunque se abra sin el \cod{.Rproj}. Se prueba corriéndolo desde otra carpeta con R 4.4.1.
+  \item Las carpetas y el archivo de entrada se definen al inicio del script (\cod{input}, \cod{output}, \cod{archivo\_zip}, \cod{archivo\_csv}); para procesar otro mes basta cambiar esas líneas.
+  \item Se subieron a GitHub el script, la bitácora, el \cod{.Rproj}, el \cod{.gitignore} y el cambio de \cod{datos/} a \cod{input/}. El \cod{README.md} explica cómo correr el código en RStudio. Las bases limpias de \cod{output/} no se suben: cada uno las genera corriendo el código.
+\end{itemize}
+
+\textbf{Lectura de la base}
+\begin{itemize}
+  \item Tildes y eñes: el archivo viene en codificación latin1; se convierten los textos a UTF-8.
+  \item Montos y cantidades vienen como texto con coma decimal (por ejemplo, \cod{"1,04e+08"}); se convierten a número. Columnas: monto estimado, cantidad, monto estimado adjudicado, cantidad ofertada, monto unitario de la oferta, valor total ofertado, cantidad adjudicada y monto de la línea adjudicada.
+\end{itemize}
+
+\textbf{Filtros (comentario 1 del profesor)}
+\begin{itemize}
+  \item Una sola línea: licitaciones con un solo producto (\cod{Codigoitem}) distinto. El 72,3\,\% de las adjudicadas cumple esto, como indicó el profesor.
+  \item Solo adjudicadas. Quedan fuera, entre las de una sola línea: 742 desiertas, 382 cerradas, 134 revocadas y 1 suspendida.
+\end{itemize}
+
+\textbf{Conversión de monedas a pesos} (valores al 30 de diciembre de 2025)
+
+\begin{center}
+\begin{tabular}{lrl}
+\toprule
+Moneda & Licitaciones & Valor usado \\
+\midrule
+Peso chileno & 3.863 & --- \\
+Unidad de Fomento & 60 & 39.727,96 pesos \\
+Dólar & 22 & 911,18 pesos \\
+Unidad Tributaria Mensual & 4 & 69.542 pesos \\
+Euro & 1 & 1,175 dólares (1.070,64 pesos) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item Se convierten el monto estimado y los montos de las ofertas (monto estimado adjudicado, monto unitario, valor total ofertado y monto de la línea adjudicada). Las cantidades no cambian.
+  \item La columna \cod{moneda\_original} indica la moneda en que venía cada licitación.
+  \item En las licitaciones en Unidad Tributaria Mensual, las ofertas dicen ``Moneda revisar'', pero los montos están en esa unidad. Excepción: una oferta no seleccionada de \cod{624-29-L125} viene en pesos (no afecta el monto adjudicado).
+  \item El script abre en RStudio una tabla con los montos antes y otra después de convertir.
+\end{itemize}
+
+\textbf{Correcciones manuales: monto estimado ya en pesos}
+
+Licitaciones en Unidad de Fomento cuyo monto estimado (columna BI del Excel) ya venía en pesos. Se deja sin convertir; el monto adjudicado (columna DD) sí se convierte. Lista \cod{estimado\_ya\_en\_pesos} del script.
+
+\begin{center}
+\begin{tabular}{llrrr}
+\toprule
+Licitación & Fila Excel & Monto estimado & Monto adjudicado & Razón \\
+\midrule
+\cod{2295-156-LP25} & 60940 & \$112.500.000 & \$96.267.204 & 0,856 \\
+\cod{218-42-LE25}   & 92374 & \$46.477.220  & \$46.481.713 & 1,000 \\
+\cod{4042-16-LE25}  & 58323 & \$20.795.181  & \$16.739.376 & 0,805 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Disclaimer: casos para consultar con el profesor}
+\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{
+Estas dos licitaciones en Unidad de Fomento tienen montos que no calzan con esa unidad y no se corrigieron. Por ahora quedan en la base \textbf{convertidas como si todo estuviera en UF}, así que sus montos en pesos están mal. Se dejan para revisar con el profesor antes de decidir si corregirlas o excluirlas.
+\begin{itemize}
+  \item \cod{2180-24-LP25} (fila 45801 del Excel; servicio de traslado de personas): monto estimado de 90.000.000 ``UF'' (probablemente pesos) y monto adjudicado de solo 1 UF. La razón entre ambos no tiene sentido ni tomando el estimado en pesos.
+  \item \cod{591-41-LR25} (fila 94755; mesa de ayuda de un portal): monto estimado de 648.000.000 ``UF'' y monto adjudicado de 484.768.013 ``UF''. Ambos parecen estar en pesos: la razón es razonable (0,75), pero convertidos dan un monto estimado de \$25,7 billones.
+\end{itemize}
+}}
+
+\section{Pendientes}
+\begin{itemize}
+  \item Montos absurdos en pesos por cantidad adjudicada mal registrada: \cod{4044-43-LE25} (fila 53967, cena de fin de año, \$416 billones) y \cod{620304-8-LE25} (fila 37830, servicio de aseo, \$263 billones). Decidir si corregir o excluir.
+  \item Variable dependiente y limpieza de valores extremos (comentario 2): razones de 0,84 (impuesto al valor agregado) y contratos de suministro con razón cercana a cero.
+  \item Resto de los comentarios del profesor: ver \cod{output/propuestas\_avance.pdf}. Entrega del avance: lunes 16 de noviembre.
+\end{itemize}
+
+\end{document}
