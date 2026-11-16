@@ -66,11 +66,20 @@ grafico_descriptivo <- ggplot(paso4, aes(x = factor(NumeroOferentes), y = Y_log_
   theme_minimal()
 ggsave(file.path(output, "grafico_oferentes_vs_razon.pdf"), grafico_descriptivo)
 
+grafico_descriptivo
+
+stargazer(as.data.frame(paso4[c("Y_log_razon", "log_N", "VisibilidadMonto")]), 
+          type = "latex", 
+          title = "Estadísticas Descriptivas", 
+          summary = TRUE)
+
 # --- 5. Primera Estimación MCO ------------------------------------------------
 # Regresión con interacción entre log_N y VisibilidadMonto, controlando por TipoLicitacion
-modelo_mco <- lm(Y_log_razon ~ log_N * VisibilidadMonto + factor(TipoLicitacion), data = paso4)
+modelo_mco <- lm(Y_log_razon ~ log_N * VisibilidadMonto + factor(Tipo) + factor(sector), data = paso4)
 
 # Exportar resultados de la regresión a formato LaTeX (.tex)
 stargazer(modelo_mco, type = "latex", 
           title = "Resultados Primera Estimación MCO",
           out = file.path(output, "tabla_mco.tex"))
+
+names(paso4)
